@@ -1,7 +1,7 @@
 import React from "react"; 
 import Navbar from "../contents/Navbar";
 import Footer from "../contents/Footer";
-import About from "../contents/About";
+
 
 const Layout=({children})=>{
   
