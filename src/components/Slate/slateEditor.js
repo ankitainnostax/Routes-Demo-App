@@ -50,24 +50,29 @@ const initialValue = [
             }
   
             switch (event.key) {
-              // When "`" is pressed, keep our existing code block logic.
-              case '`': {
-                event.preventDefault()
-                const [match] = Editor.nodes(editor, {
-                  match: n => n.type === 'code',
-                })
-                Transforms.setNodes(
-                  editor,
-                  { type: match ? 'paragraph' : 'code' },
-                  { match: n => Editor.isBlock(editor, n) }
-                )
-                break
-              }
-  
               // When "B" is pressed, bold the text in the selection.
               case 'b': {
                 event.preventDefault()
                 Editor.addMark(editor, 'bold', true)
+                break
+              }
+              case 'i':{
+                event.preventDefault()
+                
+                Editor.addMark(editor, 'italic', true)
+                break
+              }
+              case 'u':{
+                event.preventDefault()
+                
+                Editor.addMark(editor, 'underline', true)
+                break
+                
+              }
+              case 's':{
+                event.preventDefault()
+                
+                Editor.addMark(editor, 'strike', true)
                 break
               }
             }
