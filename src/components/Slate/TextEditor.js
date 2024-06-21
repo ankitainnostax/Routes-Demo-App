@@ -1,30 +1,43 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { createEditor, Editor, Transforms, Text } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
-
 import Leaf from'./renderLeaf';
 const TextEditor = () => {
   const editor = useMemo(() => withReact(createEditor()), []);
-
-  const [value, setValue] = useState([
+  const initialValue = [
     {
-      type: "paragraph",
-      children: [{ text: "Enter detailed information here..." }],
+      type: 'paragraph',
+      children: [{ text: 'A line of text in a paragraph.' }],
     },
-  ]);
+  ]
+  
+  const CodeElement = props => {
+    return (
+      <pre {...props.attributes}>
+        <code>{props.children}</code>
+      </pre>
+    )
+  }
+  
+  const DefaultElement = props => {
+    return <p {...props.attributes}>{props.children}</p>
+  }
 
-  // Define a renderElement function for Slate
-  const renderElement = useCallback((props) => {
-    switch (props.element.type) {
-      case "paragraph":
-        return <p {...props.attributes}>{props.children}</p>;
-      default:
-        return <p {...props.attributes}>{props.children}</p>;
-    }
-  }, []);
-  const renderLeaf = useCallback(props => {
-    return <Leaf {...props} />
-  }, [])
+
+  
+    const renderElement = useCallback(props => {
+      switch (props.element.type) {
+        case 'code':
+          return <CodeElement {...props} />
+        default:
+          return <DefaultElement {...props} />
+      }
+    }, [])
+   
+    const renderLeaf = useCallback(props => {
+        return <Leaf {...props} />
+      }, [])
+  
   // Function to handle text formatting
   const handleButtonClick = (format) => {
     switch (format) {
@@ -47,11 +60,7 @@ const TextEditor = () => {
 
   return (
     <div className="p-1">
-      <Slate
-        editor={editor}
-        initialValue={value}
-        onChange={(newValue) => setValue(newValue)}
-      >
+      
         <div className="flex border border-gray-400 rounded">
           <button
             name="bold"
@@ -219,11 +228,48 @@ const TextEditor = () => {
             </svg>
           </button>
         </div>
+        <Slate
+        editor={editor}
+        initialValue={initialValue}
+        
+      >
         {/*the editor is here*/}
-        <Editable renderElement={renderElement}
-        renderLeaf={renderLeaf}
-
-         />
+        <Editable
+          renderElement={renderElement}
+          renderLeaf={renderLeaf}
+          onKeyDown={event => {
+            if (!event.ctrlKey) {
+              return
+            }
+  
+            switch (event.key) {
+              // When "B" is pressed, bold the text in the selection.
+              case 'b': {
+                event.preventDefault()
+                Editor.addMark(editor, 'bold', true)
+                break
+              }
+              case 'i':{
+                event.preventDefault()
+                
+                Editor.addMark(editor, 'italic', true)
+                break
+              }
+              case 'u':{
+                event.preventDefault()
+                
+                Editor.addMark(editor, 'underline', true)
+                break
+                
+              }
+              case 's':{
+                event.preventDefault()
+                
+                Editor.addMark(editor, 'strike', true)
+                break
+              }
+            }
+          }}/>
       </Slate>
 
       <div className="flex justify-end gap-2 p-2">
